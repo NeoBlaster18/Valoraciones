@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Estrellas</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2B4865;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin-top: 9cm;
+    padding: 20px;
+    background-color: #2B4865;
+  }
+  .logo {
+    width: 200px;
+    margin-bottom: 10px;
+  }
+  .ratings-box,
+  .evaluations-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid #F11A7B;
+    background-color: #DFD7BF;
+    padding: 20px;
+    width: 40%;
+    border-left: 9px solid #FEFBF6;
+    border-right: 9px solid #FEFBF6;
+    margin-top: 1cm;
+  }
+  .stars {
+    display: inline-block;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .stars::before {
+    content: "★";
+  }
+  .stars:checked::before {
+    content: "★";
+    color: gold;
+  }
+  .divider {
+    width: 20px;
+  }
+  .side-borders {
+    border-top: 9px solid #FEFBF6;
+    border-bottom: 9px solid #FEFBF6;
+  }
+  .footer {
+    margin-top: 10px;
+    font-size: 18px;
+    color: white;
+    font-family: 'Arial Black', Arial, sans-serif;
+  }
+  .author {
+    margin-top: 20px;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <img src="img/Queso.png" alt="Logo" class="logo">
+    <h3 class="footer">5to Bachillerato en Computación</h3>
+    <div class="ratings-box side-borders">
+      <h1>Calificaciones</h1>
+      <form>
+        <input type="radio" name="rating" class="stars" value="1">
+        <input type="radio" name="rating" class="stars" value="2">
+        <input type="radio" name="rating" class="stars" value="3">
+        <input type="radio" name="rating" class="stars" value="4">
+        <input type="radio" name="rating" class="stars" value="5">
+      </form>
+      <p>1: Muy Malo, 2: Malo, 3: Medio, 4: Bueno, 5: Excelente</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="container">
+      <!-- ... (código existente) -->
+      <button id="resetButton">Votar de nuevo</button>
+    </div>
+
+    <div class="evaluations-box side-borders">
+      <h2>Evaluación:</h2>
+      <p>Excelente: <span id="excelenteCount">0</span></p>
+      <p>Bueno: <span id="buenoCount">0</span></p>
+      <p>Medio: <span id="medioCount">0</span></p>
+      <p>Malo: <span id="maloCount">0</span></p>
+      <p>Muy Malo: <span id="muyMaloCount">0</span></p>
+    </div>
+    <p class="author">Autor<br>Pablo Marroquin</p>
+  </div>
+
+  <script>
+    const stars = document.querySelectorAll('.stars');
+    const excelenteCount = document.getElementById('excelenteCount');
+    const buenoCount = document.getElementById('buenoCount');
+    const medioCount = document.getElementById('medioCount');
+    const maloCount = document.getElementById('maloCount');
+    const muyMaloCount = document.getElementById('muyMaloCount');
+    
+    const ratings = {
+      1: "Muy Malo",
+      2: "Malo",
+      3: "Medio",
+      4: "Bueno",
+      5: "Excelente"
+    };
+    
+    let hasVoted = false; // Variable para controlar si ya se votó
+    
+    stars.forEach(star => {
+      star.addEventListener('change', () => {
+        if (!hasVoted) {
+          hasVoted = true;
+          disableStars();
+          const selectedValue = document.querySelector('.stars:checked').value;
+          const ratingLabel = ratings[selectedValue];
+          updateEvalCounts(ratingLabel);
+        } else {
+          alert('¡Ya has votado!');
+        }
+      });
+    });
+
+    function updateEvalCounts(ratingLabel) {
+      if (ratingLabel === "Excelente") {
+        excelenteCount.textContent = parseInt(excelenteCount.textContent) + 1;
+      } else if (ratingLabel === "Bueno") {
+        buenoCount.textContent = parseInt(buenoCount.textContent) + 1;
+      } else if (ratingLabel === "Medio") {
+        medioCount.textContent = parseInt(medioCount.textContent) + 1;
+      } else if (ratingLabel === "Malo") {
+        maloCount.textContent = parseInt(maloCount.textContent) + 1;
+      } else if (ratingLabel === "Muy Malo") {
+        muyMaloCount.textContent = parseInt(muyMaloCount.textContent) + 1;
+      }
+    }
+
+    function disableStars() {
+      stars.forEach(star => star.disabled = true);
+    }
+
+    stars.forEach(star => {
+  star.addEventListener('change', () => {
+    if (!hasVoted) {
+      hasVoted = true;
+      disableStars();
+      const selectedValue = document.querySelector('.stars:checked').value;
+      const ratingLabel = ratings[selectedValue];
+      updateEvalCounts(ratingLabel);
+
+      // Guardar la valoración en el almacenamiento local
+      saveRating(selectedValue);
+    } else {
+      alert('¡Ya has votado!');
+    }
+  });
+});
+
+// Función para guardar la valoración en el almacenamiento local
+function saveRating(rating) {
+  const ratingsList = JSON.parse(localStorage.getItem('ratings')) || [];
+  ratingsList.push(rating);
+  localStorage.setItem('ratings', JSON.stringify(ratingsList));
+
+  // ... (código existente)
+
+const resetButton = document.getElementById('resetButton');
+
+resetButton.addEventListener('click', () => {
+  enableStars();
+  resetEvalCounts();
+});
+
+function enableStars() {
+  stars.forEach(star => star.disabled = false);
+  hasVoted = false; // Permitir nueva votación
+}
+
+function resetEvalCounts() {
+  excelenteCount.textContent = 0;
+  buenoCount.textContent = 0;
+  medioCount.textContent = 0;
+  maloCount.textContent = 0;
+  muyMaloCount.textContent = 0;
+}
+
+}
+  </script>
+</body>
+</html>
